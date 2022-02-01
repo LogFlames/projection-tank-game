@@ -3,25 +3,8 @@
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
 
-const int PARTICLE_COUNT = 200;
-const float GRAVITY = 100.0f;
-
-float px[PARTICLE_COUNT];
-float py[PARTICLE_COUNT];
-float pvx[PARTICLE_COUNT];
-float pvy[PARTICLE_COUNT];
-float ps[PARTICLE_COUNT];
-
 Game::Game()
 {
-    for (int i = 0; i < PARTICLE_COUNT; ++i)
-    {
-        px[i] = rand() % 1080;
-        py[i] = rand() % 1080;
-        pvx[i] = 0;
-        pvy[i] = 0;
-        ps[i] = 5.0f; // (float)(rand() % 900) / 100.0f + 1.0f;
-    }
 }
 
 Game::~Game()
@@ -94,65 +77,20 @@ void Game::handleEvents()
 
 void Game::update(float deltaTime)
 {
-    for (int i = 0; i < PARTICLE_COUNT; ++i)
-    {
-        float fx, fy;
-        fx = fy = 0.0f;
-
-        for (int j = 0; j < PARTICLE_COUNT; ++j)
-        {
-            if (i == j)
-                continue;
-
-            float angle = atan2(py[j] - py[i], px[j] - px[i]);
-            float distance2 = (py[i] - py[j]) * (py[i] - py[j]) + (px[i] - px[j]) * (px[i] - px[j]);
-
-            float force = GRAVITY * ps[i] * ps[j] / std::max(distance2, 10.0f);
-            // std::cout << force << std::endl;
-
-            fx += cos(angle) * force;
-            fy += sin(angle) * force;
-        }
-
-        pvx[i] += fx / ps[i] * deltaTime;
-        pvy[i] += fy / ps[i] * deltaTime;
-
-        // std::cout << fx << std::endl;
-
-        px[i] += pvx[i] * deltaTime;
-        py[i] += pvy[i] * deltaTime;
-
-        if (px[i] < 0)
-        {
-            px[i] = 1080.0f;
-        } else if (px[i] > 1080.0f) {
-            px[i] = 0.0f;
-        }
-
-        if (py[i] < 0)
-        {
-            py[i] = 1080.0f;
-        } else if (py[i] > 1080.0f) {
-            py[i] = 0.0f;
-        }
-    }
-    // std::cout << deltaTime << std::endl;
-    // manager.update(deltaTime);
 }
+
 void Game::render()
 {
     SDL_SetRenderDrawColor(renderer, 40, 40, 40, 255);
     SDL_RenderClear(renderer);
 
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200);
+    // SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200);
 
-    for (int i = 0; i < PARTICLE_COUNT; ++i)
-    {
-        SDL_Rect rect = { px[i] - ps[i] / 2.0f * 2.0f, py[i] - ps[i] / 2.0f * 2.0f, ps[i] * 2.0f, ps[i] * 2.0f };
-        SDL_RenderFillRect(renderer, &rect);
-    }
-
-    // manager.draw();
+    // for (int i = 0; i < PARTICLE_COUNT; ++i)
+    // {
+    //     SDL_Rect rect = { px[i] - ps[i] / 2.0f * 2.0f, py[i] - ps[i] / 2.0f * 2.0f, ps[i] * 2.0f, ps[i] * 2.0f };
+    //     SDL_RenderFillRect(renderer, &rect);
+    // }
 
     SDL_RenderPresent(renderer);
 }
